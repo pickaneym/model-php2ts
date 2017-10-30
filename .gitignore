@@ -1,0 +1,8 @@
+vendor
+bin
+composer.lock
+tmp
+assets/components
+.idea
+bower_components
+*.swp
