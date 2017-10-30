@@ -13,10 +13,10 @@ class ParameterMapper{
     /**
      * @var string
      */
-    private $type;
+    private $typeInference;
 
     public function __toString(){
-        return "{$this->name}: {$this->type}";
+        return "{$this->name}: {$this->typeInference}";
     }
 
     /**
@@ -36,15 +36,15 @@ class ParameterMapper{
     /**
      * @return string
      */
-    public function getType(): string{
-        return $this->type;
+    public function getTypeInference(): string{
+        return $this->typeInference;
     }
 
     /**
-     * @param string $type
+     * @param string $typeInference
      */
-    public function setType(string $type){
-        $this->type = $type;
+    public function setTypeInference(string $typeInference){
+        $this->typeInference = $typeInference;
     }
 
 }

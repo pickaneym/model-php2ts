@@ -13,7 +13,7 @@ class PropertyMapper{
     /**
      * @var string
      */
-    private $type;
+    private $typeInference;
 
     /**
      * @var string
@@ -22,7 +22,7 @@ class PropertyMapper{
 
 
     public function __toString(){
-        return "{$this->accessModifier} {$this->name}: {$this->type}";
+        return "{$this->accessModifier} {$this->name}: {$this->typeInference}";
     }
 
     /**
@@ -42,15 +42,15 @@ class PropertyMapper{
     /**
      * @return string
      */
-    public function getType(): string{
-        return $this->type;
+    public function getTypeInference(): string{
+        return $this->typeInference;
     }
 
     /**
-     * @param string $type
+     * @param string $typeInference
      */
-    public function setType(string $type){
-        $this->type = $type;
+    public function setTypeInference(string $typeInference){
+        $this->typeInference = $typeInference;
     }
 
     /**

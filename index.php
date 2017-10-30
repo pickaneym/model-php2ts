@@ -29,10 +29,8 @@ foreach ($phpModelFiles as $file) {
 
         // Replace `php file` dir path with ts models dir path.
         $tsModelsPath = substr_replace($file, $tsModelsDir, 0, strlen($phpModelsDir));
-
         $fileInfo = pathinfo($tsModelsPath);
-
-        $tsFileName = $fileInfo['dirname'] . DIRECTORY_SEPARATOR . $fileInfo['filename'] . '.ts';
+        $tsFileName = $fileInfo['dirname'] . DIRECTORY_SEPARATOR . camel2dashed($fileInfo['filename']) . '.model.ts';
 
         if (!file_exists($fileInfo['dirname'])) {
             mkdir($fileInfo['dirname']);
@@ -40,11 +38,13 @@ foreach ($phpModelFiles as $file) {
 
         file_put_contents($tsFileName, $visitor->getTypescriptClass());
 
-        break;
-
     } catch (PhpParser\Error $e) {
         echo 'Parse Error: ', $e->getMessage();
     }
 
 }
 
+
+function camel2dashed($fileName){
+    return strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $fileName));
+}
