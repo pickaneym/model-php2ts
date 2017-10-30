@@ -2,7 +2,6 @@
 
 namespace mapper;
 
-
 /**
  * Class AccessorMapper
  * @package mapper
@@ -29,8 +28,6 @@ class AccessorMapper{
      */
     private $returnType;
 
-    private $isPrivate;
-
 
     public function __construct($accessType){
         $this->accessType = $accessType;
@@ -48,7 +45,7 @@ class AccessorMapper{
      * @return string
      */
     private function getter(){
-        $method = "{$this->accessType} {$this->name}(): {$this->returnType}  {\n";
+        $method = "{$this->accessType} {$this->name}(): {$this->returnType} {\n";
         $method .= "    return this._{$this->name};";
         $method .= "\n  }\n";
         return $method;

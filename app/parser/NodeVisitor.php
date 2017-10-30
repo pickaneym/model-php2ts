@@ -3,7 +3,9 @@
 namespace parser;
 
 ini_set('display_errors', 1);
-require_once(__DIR__ . '/../vendor/autoload.php');
+ini_set('xdebug.max_nesting_level', 3000);
+
+require_once(__DIR__ . '/../../vendor/autoload.php');
 require_once(__DIR__ . '/../mapper/ClassMapper.php');
 require_once(__DIR__ . '/../mapper/PropertyMapper.php');
 require_once(__DIR__ . '/../mapper/AccessorMapper.php');
@@ -13,7 +15,7 @@ use PhpParser;
 use PhpParser\Node;
 use mapper;
 
-class Visitor extends PhpParser\NodeVisitorAbstract{
+class NodeVisitor extends PhpParser\NodeVisitorAbstract{
 
     /**
      * @var \mapper\ClassMapper[]
@@ -49,6 +51,7 @@ class Visitor extends PhpParser\NodeVisitorAbstract{
 
     }
 
+
     /**
      * @return string
      */
@@ -62,30 +65,34 @@ class Visitor extends PhpParser\NodeVisitorAbstract{
      * @param \PhpParser\Comment|null $phpDoc
      * @return string
      */
-    private function parsePhpDocForProperty($phpDoc){
-        $result = 'any';
+    private function parsePhpDocForPropertyType($phpDoc){
+        $type = 'any';
+
+        echo $phpDoc->getText() . '</br>';
+
 
         if ($phpDoc !== null) {
             if (preg_match('/@var[ \t]+([a-z0-9]+)/i', $phpDoc->getText(), $matches)) {
+                print_r($matches);
                 $t = trim(strtolower($matches[1]));
 
                 switch ($t) {
                     case 'integer':
                     case 'int':
                     case 'float':
-                        $result = 'number';
+                        $type = 'number';
                         break;
                     case 'string':
-                        $result = 'string';
+                        $type = 'string';
                         break;
                     case '\datetime';
-                        $result = 'Date';
+                        $type = 'Date';
                         break;
                 }
             }
         }
 
-        return $result;
+        return $type;
     }
 
     /**
@@ -94,16 +101,15 @@ class Visitor extends PhpParser\NodeVisitorAbstract{
      */
     private function generateProperty($property){
         $propertyName = $property->props[0]->name;
-        $typeInference = $this->parsePhpDocForProperty($property->getDocComment());
+        $typeInference = $this->parsePhpDocForPropertyType($property->getDocComment());
 
         $propertyMapper = new mapper\PropertyMapper();
-        $propertyMapper->setName($propertyName);
+        $propertyMapper->setName($property->isPrivate() ? '_' . $propertyName : $propertyName);
         $propertyMapper->setType($typeInference);
 
         if ($property->isPublic()) {
             $propertyMapper->setAccessModifier('public');
         } elseif ($property->isPrivate()) {
-            $propertyMapper->setName('_' . $propertyName);
             $propertyMapper->setAccessModifier('private');
         } elseif ($property->isProtected()) {
             $propertyMapper->setAccessModifier('protected');
@@ -119,7 +125,7 @@ class Visitor extends PhpParser\NodeVisitorAbstract{
     private function generateGetter($property){
         $getter = new mapper\AccessorMapper('get');
         $getter->setName($property->props[0]->name);
-        $getter->setReturnType($this->parsePhpDocForProperty($property->getDocComment()));
+        $getter->setReturnType($this->parsePhpDocForPropertyType($property->getDocComment()));
         return $getter;
     }
 
@@ -132,7 +138,7 @@ class Visitor extends PhpParser\NodeVisitorAbstract{
 
         $parameter = new mapper\ParameterMapper();
         $parameter->setName($propertyName);
-        $parameter->setType($this->parsePhpDocForProperty($property->getDocComment()));
+        $parameter->setType($this->parsePhpDocForPropertyType($property->getDocComment()));
 
         $setter = new mapper\AccessorMapper('set');
         $setter->setName($property->props[0]->name);
