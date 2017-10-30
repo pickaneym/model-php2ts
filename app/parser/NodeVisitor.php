@@ -56,9 +56,6 @@ class NodeVisitor extends PhpParser\NodeVisitorAbstract{
      * @return void
      */
     public function enterNode(Node $node){
-//        print_r($node);
-//        print_r($node->getAttributes());
-
         if ($node instanceof PhpParser\Node\Stmt\Namespace_) {
             $this->currentNodeNamespace = $node;
         }
@@ -71,12 +68,13 @@ class NodeVisitor extends PhpParser\NodeVisitorAbstract{
         if ($node instanceof PhpParser\Node\Stmt\Property) {
             $this->currentNodeProperty = $node;
             $property = $this->generateProperty($this->currentNodeProperty);
-            $getter = $this->generateGetter($this->currentNodeProperty);
-            $setter = $this->generateSetter($this->currentNodeProperty);
 
             $this->classMapper->appendProperty($property);
 
             if ($this->currentNodeProperty->isPrivate()) {
+                $getter = $this->generateGetter($this->currentNodeProperty);
+                $setter = $this->generateSetter($this->currentNodeProperty);
+
                 $this->classMapper->appendAccessor($getter);
                 $this->classMapper->appendAccessor($setter);
             }

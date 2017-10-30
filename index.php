@@ -23,10 +23,6 @@ foreach ($phpModelFiles as $file) {
         $stmts = $parser->parse($code);
         $stmts = $traverser->traverse($stmts);
 
-//        print_r($stmts);
-
-//        echo "<pre><code>" . $visitor->getTypescriptClass() . "</code></pre>";
-
         // Replace `php file` dir path with ts models dir path.
         $tsModelsPath = substr_replace($file, $tsModelsDir, 0, strlen($phpModelsDir));
         $fileInfo = pathinfo($tsModelsPath);
