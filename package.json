@@ -1,0 +1,27 @@
+{
+  "name": "model-php2ts",
+  "version": "1.0.0",
+  "description": "Converts php model(class) to typescript model(class).",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pickaneym/model-php2ts.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pickaneym/model-php2ts/issues"
+  },
+  "homepage": "https://github.com/pickaneym/model-php2ts#readme",
+  "dependencies": {
+    "dropzone": "^5.2.0",
+    "normalize.css": "^7.0.0"
+  }
+}

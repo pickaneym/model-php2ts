@@ -5,6 +5,11 @@ namespace mapper;
 
 class ClassMapper{
     /**
+     * @var \mapper\ImportMapper[];
+     */
+    private $imports;
+
+    /**
      * @var string
      */
     private $className;
@@ -12,28 +17,44 @@ class ClassMapper{
     /**
      * @var \mapper\PropertyMapper[]
      */
-    private $properties = [];
+    private $properties;
 
     /**
      * @var \mapper\AccessorMapper[]
      */
-    private $accessors = [];
+    private $accessors;
 
     public function __construct($name){
+        $this->imports = [];
         $this->className = $name;
+        $this->properties = [];
+        $this->accessors = [];
     }
 
     public function __toString(){
-        return $this->mapClass($this->mapProperties(), $this->mapAccessors());
+        return $this->mapClass($this->mapImports(), $this->mapProperties(), $this->mapAccessors());
     }
 
     /**
+     * @return string
+     */
+    private function mapImports(){
+        $imports = implode(";\n", array_map(function ($i){
+            return (string)$i;
+        }, $this->imports));
+
+        return count($this->imports) > 0 ? $imports . ";\n\n" : '';
+    }
+
+    /**
+     * @param string $imports
      * @param string $properties
      * @param string $methods
      * @return string
      */
-    private function mapClass($properties, $methods){
-        $class = "export class {$this->className} {\n";
+    private function mapClass($imports, $properties, $methods){
+        $class = $imports;
+        $class .= "export class {$this->className} {\n";
         $class .= $properties . ';';
         $class .= "\n\n";
         $class .= $methods;
@@ -115,6 +136,21 @@ class ClassMapper{
     public function appendAccessor(AccessorMapper $accessor){
         $this->accessors[] = $accessor;
     }
+
+    /**
+     * @return \mapper\ImportMapper[]
+     */
+    public function getImports(): array{
+        return $this->imports;
+    }
+
+    /**
+     * @param \mapper\ImportMapper[] $imports
+     */
+    public function setImports(array $imports){
+        $this->imports = $imports;
+    }
+
 
 }
 

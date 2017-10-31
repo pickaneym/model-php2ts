@@ -1,11 +1,11 @@
 {
   "name": "pickaneym/modelphp2ts",
-  "type": "library",
+  "type": "app",
   "description": "",
   "keywords": [
     "web",
     "php2ts",
-    "library"
+    "webapp"
   ],
   "license": "",
   "authors": [
