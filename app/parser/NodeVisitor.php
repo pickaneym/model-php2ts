@@ -2,15 +2,13 @@
 
 namespace parser;
 
-ini_set('display_errors', 1);
-ini_set('xdebug.max_nesting_level', 3000);
-
 require_once(__DIR__ . '/../../vendor/autoload.php');
 require_once(__DIR__ . '/../mapper/ImportMapper.php');
 require_once(__DIR__ . '/../mapper/ClassMapper.php');
 require_once(__DIR__ . '/../mapper/PropertyMapper.php');
 require_once(__DIR__ . '/../mapper/AccessorMapper.php');
 require_once(__DIR__ . '/../mapper/ParameterMapper.php');
+require_once(__DIR__ . '/../global.php');
 
 use PhpParser;
 use PhpParser\Node;
@@ -157,7 +155,7 @@ class NodeVisitor extends PhpParser\NodeVisitorAbstract{
         // RawTypes doesn't care whether the var type is declared as a single object or an array
         $rawTSType = str_replace(['[', ']'], '', $typeInference);
 
-        if (!$this->belongsToTSBasicType($rawTSType) && $this->currentNodeNamespace !== null) {
+        if (!$this->belongsToTSBasicTypes($rawTSType) && $this->currentNodeNamespace !== null) {
             $importPath = $this->getTSImportPath($property, $this->currentNodeNamespace);
             $this->prepareImportStmt($rawTSType, $importPath);
         }
@@ -181,7 +179,7 @@ class NodeVisitor extends PhpParser\NodeVisitorAbstract{
      * @param string $type
      * @return bool
      */
-    private function belongsToTSBasicType($type){
+    private function belongsToTSBasicTypes($type){
         $tsBasicTypes = ['string', 'number', 'boolean', 'never', 'null', 'undefined', 'void', 'any'];
         return in_array($type, $tsBasicTypes);
     }
@@ -255,10 +253,6 @@ class NodeVisitor extends PhpParser\NodeVisitorAbstract{
         }
 
         return $importPath;
-    }
-
-    private function getPropertyRootPath(){
-
     }
 
     /**

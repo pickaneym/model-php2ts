@@ -1,46 +1,66 @@
-<?php
-
-require_once('app/parser/NodeVisitor.php');
-
-$parser = new PhpParser\Parser(new PhpParser\Lexer\Emulative);
-
-$dir = __DIR__ . DIRECTORY_SEPARATOR;
-$phpModelsDir = $dir . 'test' . DIRECTORY_SEPARATOR . 'model';
-$tsModelsDir = $dir . 'test' . DIRECTORY_SEPARATOR . 'ts-models';
-
-//// iterate over all .php files in the directory
-$phpModelFiles = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($phpModelsDir));
-$phpModelFiles = new RegexIterator($phpModelFiles, '/\.php$/');
-
-foreach ($phpModelFiles as $file) {
-    try {
-        $code = file_get_contents($file);
-
-        $traverser = new PhpParser\NodeTraverser;
-        $visitor = new parser\NodeVisitor;
-        $traverser->addVisitor($visitor);
-
-        $stmts = $parser->parse($code);
-        $stmts = $traverser->traverse($stmts);
-
-        // Replace `php file` dir path with ts models dir path.
-        $tsModelsPath = substr_replace($file, $tsModelsDir, 0, strlen($phpModelsDir));
-        $fileInfo = pathinfo($tsModelsPath);
-        $tsFileName = $fileInfo['dirname'] . DIRECTORY_SEPARATOR . camel2dashed($fileInfo['filename']) . '.model.ts';
-
-        if (!file_exists($fileInfo['dirname'])) {
-            mkdir($fileInfo['dirname']);
-        }
-
-        file_put_contents($tsFileName, $visitor->getTypescriptClass());
-
-    } catch (PhpParser\Error $e) {
-        echo 'Parse Error: ', $e->getMessage();
-    }
-
-}
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>model-php2ts</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="node_modules/normalize.css/normalize.css" type="text/css" rel="stylesheet"/>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+  <link href="node_modules/dropzone/dist/min/dropzone.min.css" type="text/css" rel="stylesheet"/>
+  <link href="assets/css/app.css" type="text/css" rel="stylesheet"/>
+  <script src="node_modules/dropzone/dist/min/dropzone.min.js"></script>
+</head>
+<body>
 
 
-function camel2dashed($fileName){
-    return strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $fileName));
-}
+<main class="container-fluid">
+  <div class="row">
+    <div class="col-xs-6 php-box">
+      <header class="php-header">
+        <img src="assets/img/php.png">
+      </header>
+      <form action="app/upload.php/"
+            method="post"
+            enctype="multipart/form-data"
+            class="dropzone"
+            id="dropzone">
+      </form>
+    </div>
+
+    <div class="col-xs-6">
+      <header class="ts-header">
+        <img src="assets/img/ts.png">
+      </header>
+      <div class="ts-box">
+        <span id="placeholder-text">Wait for it &hellip;</span>
+
+        <div class="lds-css ng-scope" id="conversion-loader">
+          <div style="width:100%;height:100%" class="lds-rolling">
+            <div></div>
+          </div>
+        </div>
+
+        <a href="ts-models.zip" id="ts-models-link">
+          <img src="assets/img/download.png">ts-models.zip
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div>
+    PHP Models
+  </div>
+  <div>
+    Typescript Models
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="assets/js/app.js"></script>
+
+</body>
+</html>
