@@ -43,15 +43,18 @@ function convertPHPModelsToTS(){
 
     }
 
-    $the_folder = TS_MODELS_DIR;
+    $source = TS_MODELS_DIR;
     $zip_file_name = 'ts-models.zip';
+    $pathToZip = ROOT_PATH . DS . $zip_file_name;
 
-    echo TS_MODELS_DIR . DS . $zip_file_name;
+    if (file_exists($pathToZip)) {
+        unlink($pathToZip);
+    }
 
     $za = new FlxZipArchive;
-    $res = $za->open(ROOT_PATH . DS . $zip_file_name, ZipArchive::CREATE);
+    $res = $za->open($pathToZip, ZipArchive::CREATE);
     if ($res === true) {
-        $za->addDir($the_folder, 'ts-models');
+        $za->addDir($source, 'ts-models');
         $za->close();
     } else {
         echo 'Could not create a zip archive';
@@ -71,7 +74,10 @@ function cleanUpTmpFiles($target){
             cleanUpTmpFiles($file);
         }
 
-        rmdir($target);
+        // Checks if dir is empty
+        if (!(new FilesystemIterator($target))->valid()) {
+            rmdir($target);
+        }
     } elseif (is_file($target)) {
         unlink($target);
     }
