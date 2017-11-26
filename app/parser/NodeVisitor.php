@@ -70,11 +70,11 @@ class NodeVisitor extends PhpParser\NodeVisitorAbstract{
             $this->classMapper->appendProperty($property);
 
             if ($this->currentNodeProperty->isPrivate()) {
-                $getter = $this->generateGetter($this->currentNodeProperty);
-                $setter = $this->generateSetter($this->currentNodeProperty);
-
-                $this->classMapper->appendAccessor($getter);
-                $this->classMapper->appendAccessor($setter);
+//                $getter = $this->generateGetter($this->currentNodeProperty);
+//                $setter = $this->generateSetter($this->currentNodeProperty);
+//
+//                $this->classMapper->appendAccessor($getter);
+//                $this->classMapper->appendAccessor($setter);
             }
         }
     }
@@ -161,16 +161,17 @@ class NodeVisitor extends PhpParser\NodeVisitorAbstract{
         }
 
         $propertyMapper = new mapper\PropertyMapper();
-        $propertyMapper->setName($property->isPrivate() ? '_' . $propertyName : $propertyName);
+        $propertyMapper->setName($propertyName);
         $propertyMapper->setTypeInference($typeInference);
-
-        if ($property->isPublic()) {
-            $propertyMapper->setAccessModifier('public');
-        } elseif ($property->isPrivate()) {
-            $propertyMapper->setAccessModifier('private');
-        } elseif ($property->isProtected()) {
-            $propertyMapper->setAccessModifier('protected');
-        }
+        $propertyMapper->setAccessModifier('');
+//
+//        if ($property->isPublic()) {
+//            $propertyMapper->setAccessModifier('public');
+//        } elseif ($property->isPrivate()) {
+//            $propertyMapper->setAccessModifier('private');
+//        } elseif ($property->isProtected()) {
+//            $propertyMapper->setAccessModifier('protected');
+//        }
 
         return $propertyMapper;
     }

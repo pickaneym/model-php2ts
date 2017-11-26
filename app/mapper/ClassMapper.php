@@ -56,7 +56,7 @@ class ClassMapper{
         $class = $imports;
         $class .= "export class {$this->className} {\n";
         $class .= $properties . ';';
-        $class .= "\n\n";
+//        $class .= "\n\n";
         $class .= $methods;
         $class .= "\n}";
         return $class;
